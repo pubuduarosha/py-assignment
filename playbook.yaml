@@ -1,0 +1,42 @@
+---
+- name: Perform various actions based on provided variable
+  hosts: all
+  become: yes
+  vars:
+    action: "{{ action }}"  # This variable will be provided when running the playbook
+    email_recipient: "pubudu@gmail.com"  
+
+  tasks:
+    - name: Verify and install httpd if not installed
+      when: action == 'verify_install'
+      yum:
+        name: httpd
+        state: present
+
+    - name: Check disk space on all servers
+      when: action == 'check-disk'
+      shell: "df -h | awk 'NR>1 && $5 > 80 {print $0}'"
+      register: disk_space_output
+      ignore_errors: yes
+
+    - name: Send alert email for disk usage > 80%
+      when: action == 'check-disk' and disk_space_output.stdout_lines | length > 0
+      mail:
+        host: localhost
+        subject: "Disk Usage Alert"
+        to: "{{ email_recipient }}"
+        body: "{{ disk_space_output.stdout }}"
+
+    - name: Check status of application 'rbcapp1' and services
+      when: action == 'check-status'
+      uri:
+        url: "https://myservice.example.com/healthcheck"
+        return_content: yes
+      register: app_status
+
+    - name: Show status of 'rbcapp1' and services that are down
+      when: action == 'check-status'
+      debug:
+        msg: |
+          Application 'rbcapp1' status: {{ app_status.json.overall_status }}
+          Services down: {{ app_status.json }}
