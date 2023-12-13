@@ -7,10 +7,10 @@
 
 ### Steps to Run Test 1
 1. **Service Monitoring and JSON Creation**
-    - Run the provided Python script `Test1_and_Test2.ipynb` to monitor services (`httpd`, `rabbitMQ`, `postgreSQL`) and create JSON objects for each service status.
+    - Run the provided Python script `Test1.ipynb` to monitor services (`httpd`, `rabbitMQ`, `postgreSQL`) and create JSON objects for each service status.
 
 2. **REST Service Setup**
-    - Run the Flask-based Python script `Test1_and_Test2.ipynb` to create endpoints for:
+    - Run the Flask-based Python script `Test1.ipynb` to create endpoints for:
         - `/add` to insert payload into Elasticsearch
         - `/healthcheck` to retrieve overall application status
         - `/healthcheck/{serviceName}` to retrieve specific application status
